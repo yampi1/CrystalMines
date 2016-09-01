@@ -4,6 +4,7 @@ contract Game {
     
     mapping(uint => address) public Players;
     mapping(address => bool) public isPlayer;
+    mapping(address => uint256) public minedetherByAddress;
     mapping(address => Reactor) public reactorByAddress;
     mapping(address => CrystalMine) public crystalmineByAddress;
 
@@ -68,7 +69,7 @@ contract Game {
             uint lastCollect = crystalmineByAddress[msg.sender].lastCollectDate;
             uint nextCollect = crystalmineByAddress[msg.sender].nextCollectDate;
             if(now >= nextCollect) {
-                msg.sender.send(crystalmineByAddress[msg.sender].output);
+                minedetherByAddress[msg.sender] += crystalmineByAddress[msg.sender].output;
                 crystalmineByAddress[msg.sender].lastCollectDate = now;
                 crystalmineByAddress[msg.sender].nextCollectDate = now + 8 hours;
             } else {
@@ -76,6 +77,17 @@ contract Game {
             }
         } else {
             throw;
+        }
+    }
+    
+    function Collect(){
+        if(msg.value > 0) throw;
+        if(isPlayer[msg.sender]) {
+            if(minedetherByAddress[msg.sender] > 0) {
+                msg.sender.send(minedetherByAddress[msg.sender]);
+            } else {
+                throw;
+            }
         }
     }
     
