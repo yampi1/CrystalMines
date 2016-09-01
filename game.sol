@@ -100,12 +100,12 @@ contract Game {
             reactorByAddress[msg.sender] = Reactor({
                 level: 1,
                 availableMineUpgrades: 5,
-                nextLVLrequirement: 5 szabo
+                nextLVLrequirement: 2000000000 wei
             });
             crystalmineByAddress[msg.sender] = CrystalMine({
                 level: 1,
                 output: 800000000000 wei,
-                nextLVLrequirement: 10 szabo,
+                nextLVLrequirement: 1000000000 wei,
                 lastCollectDate: now,
                 nextCollectDate: now + 8 hours
             });
