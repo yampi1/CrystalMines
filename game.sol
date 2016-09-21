@@ -27,8 +27,12 @@ contract Game {
         if(isPlayer[msg.sender]) {
             uint256 x = reactorByAddress[msg.sender].nextLVLrequirement;
             if(msg.value >= x) {
-                msg.sender.send(msg.value - x);
-                contractOwner.send((x * 10) / 100);
+                if(!msg.sender.send(msg.value - x)) {
+                    throw;
+                }
+                if(!contractOwner.send((x * 10) / 100)) {
+                    throw;
+                }
                 reactorByAddress[msg.sender].level += 1;
                 reactorByAddress[msg.sender].availableMineUpgrades *= 2;
                 reactorByAddress[msg.sender].nextLVLrequirement *= 2;
@@ -47,8 +51,12 @@ contract Game {
             uint z = crystalmineByAddress[msg.sender].level + 1;
             if(z <= y) {
                 if(msg.value >= x) {
-                    msg.sender.send(msg.value - x);
-                    contractOwner.send((x * 10) / 100);
+                    if(!msg.sender.send(msg.value - x)) {
+                        throw;
+                    }
+                    if(!contractOwner.send((x * 10) / 100)) {
+                        throw;
+                    }
                     crystalmineByAddress[msg.sender].level += 1;
                     crystalmineByAddress[msg.sender].output += 50000000000 wei;
                     crystalmineByAddress[msg.sender].nextLVLrequirement *= 2;
@@ -84,7 +92,10 @@ contract Game {
         if(msg.value > 0) throw;
         if(isPlayer[msg.sender]) {
             if(minedetherByAddress[msg.sender] > 0) {
-                msg.sender.send(minedetherByAddress[msg.sender]);
+                minedetherByAddress[msg.sender] = 0;
+                if(!msg.sender.send(minedetherByAddress[msg.sender])) {
+                    throw;
+                }
             } else {
                 throw;
             }
@@ -93,8 +104,12 @@ contract Game {
     
     function newPlayer() {
         if(msg.value >= 50 finney) {
-            contractOwner.send(5 finney);
-            msg.sender.send(msg.value - 50 finney);
+            if(!contractOwner.send(5 finney)) {
+                throw;
+            }
+            if(!msg.sender.send(msg.value - 50 finney)) {
+                throw;
+            }
             isPlayer[msg.sender] = true;
             Players[totalPlayers++] = msg.sender;
             reactorByAddress[msg.sender] = Reactor({
